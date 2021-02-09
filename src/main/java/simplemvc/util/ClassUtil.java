@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -105,6 +106,35 @@ public class ClassUtil {
     }
 
     /**
+     * 设置类的属性值
+     *
+     * @param field  属性
+     * @param target 类实例
+     * @param value  值
+     */
+    public static void setField(Field field, Object target, Object value) {
+        setField(field, target, value, true);
+    }
+
+    /**
+     * 设置类的属性值
+     *
+     * @param field      属性
+     * @param target     类实例
+     * @param value      值
+     * @param accessible 是否允许设置私有属性
+     */
+    public static void setField(Field field, Object target, Object value, boolean accessible) {
+        field.setAccessible(accessible);
+        try {
+            field.set(target, value);
+        } catch (IllegalAccessException e) {
+            log.error("setField error", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 从Path获取Class
      *
      * @param classPath   类的路径
@@ -137,10 +167,5 @@ public class ClassUtil {
         String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
                 .replaceAll("/", ".");
         return loadClass(className);
-    }
-
-    public static void main(String[] args) {
-        Set<Class<?>> set = getPackageClass("simplemvc/util");
-        set.forEach(System.out::println);
     }
 }

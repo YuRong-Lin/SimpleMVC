@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Bean容器-单例
@@ -83,6 +84,31 @@ public class BeanContainer {
                 })
                 .forEach(clz -> beanMap.put(clz, ClassUtil.newInstance(clz)));
         isLoadBean = true;
+    }
+
+    public Set<Class<?>> getClasses() {
+        return beanMap.keySet();
+    }
+
+    public Object getBean(Class<?> clz) {
+        if (clz == null) {
+            return null;
+        }
+        return beanMap.get(clz);
+    }
+
+    /**
+     * 通过实现类或者父类获取Bean的Class集合
+     *
+     * @param interfaceClass 接口Class或者父类Class
+     * @return Class集合
+     */
+    public Set<Class<?>> getClassesBySuper(Class<?> interfaceClass) {
+        return beanMap.keySet()
+                .stream()
+                .filter(interfaceClass::isAssignableFrom)
+                .filter(clz -> !clz.equals(interfaceClass))
+                .collect(Collectors.toSet());
     }
 
     private enum ContainerHolder {

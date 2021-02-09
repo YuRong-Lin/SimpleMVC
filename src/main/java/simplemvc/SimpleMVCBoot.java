@@ -3,6 +3,7 @@ package simplemvc;
 import simplemvc.core.BeanContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import simplemvc.ioc.Ioc;
 
 /**
  * SimpleMVC 启动器
@@ -40,12 +41,10 @@ public final class SimpleMVCBoot {
 
             System.out.println("beans size: " + BeanContainer.getBeanSize());
 
+            new Ioc().doIoc();
+
         } catch (Exception e) {
             log.error("SimpleMVCBoot start failed!", e);
         }
-    }
-
-    public static void main(String[] args) {
-        SimpleMVCBoot.run(SimpleMVCBoot.class);
     }
 }
